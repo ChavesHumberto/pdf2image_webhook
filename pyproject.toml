@@ -1,0 +1,17 @@
+[project]
+name = "pdf2image-webhook"
+version = "0.1.0"
+description = "Webhook para converter PDF em imagem base64 usando Flask e pdf2image"
+authors = [
+    { name="Humberto Chaves Junior", email="chaves.hjr@gmail.com" }
+]
+dependencies = [
+    "flask",
+    "pdf2image",
+    "pillow"
+]
+requires-python = ">=3.8"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
