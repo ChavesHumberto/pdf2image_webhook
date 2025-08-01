@@ -4,22 +4,23 @@ import base64
 import io
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 16MB
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 20MB
 
 @app.route('/pdf-to-image', methods=['POST'])
 def pdf_to_image():
     """
     n8n-compatible webhook endpoint for converting PDF files to base64-encoded JPEG images.
+    Aceita apenas PDF enviado como binário (application/pdf).
     """
-    if 'file' not in request.files:
-        return jsonify({'success': False, 'error': 'No file part in request'}), 400
+    if request.content_type != 'application/pdf':
+        return jsonify({'success': False, 'error': 'Content-Type must be application/pdf'}), 400
 
-    file = request.files['file']
-    if file.filename == '' or not file.filename.lower().endswith('.pdf'):
-        return jsonify({'success': False, 'error': 'Invalid or missing file'}), 400
+    pdf_bytes = request.get_data()
+    if not pdf_bytes:
+        return jsonify({'success': False, 'error': 'No PDF data received'}), 400
 
     try:
-        images = convert_from_bytes(file.read(), dpi=200, fmt="jpeg")
+        images = convert_from_bytes(pdf_bytes, dpi=200, fmt="jpeg")
         if not images:
             return jsonify({'success': False, 'error': 'No pages found'}), 400
 
@@ -31,7 +32,6 @@ def pdf_to_image():
         return jsonify({
             'success': True,
             'image_base64': img_base64,
-            'filename': file.filename,
             'pages_processed': 1,
             'total_pages': len(images)
         }), 200
@@ -42,4 +42,3 @@ def pdf_to_image():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 
-    
