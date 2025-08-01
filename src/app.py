@@ -4,7 +4,7 @@ import base64
 import io
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 16MB
 
 @app.route('/pdf-to-image', methods=['POST'])
 def pdf_to_image():
